@@ -1,59 +1,90 @@
 ---
-description: Rules for {{ app_name | pascal_case }} FastAPI project
+description: {{ app_name | pascal_case }} 项目开发规范 - FastAPI 后端
 globs: ["src/**/*.py", "tests/**/*.py"]
+alwaysApply: true
 ---
 
-# {{ app_name | pascal_case }} Project Rules
+# {{ app_name | pascal_case }} - 开发规范
 
-This FastAPI project follows Anchor Stack conventions.
+> Anchor Stack v{{ stack_version }} | FastAPI {{ dependencies.fastapi }}
 
-## Logging
+## 🚨 禁止事项
 
-ALWAYS use the logger module:
+- ❌ `print()` → 使用 `logger.info()` / `logger.error()`
+- ❌ `os.getenv()` → 使用 `settings.database_url`
+- ❌ 修改 `src/app/core/*` 文件
+- ❌ 删除 `anchor.config.json`
+- ❌ 硬编码配置值
+- ❌ 在路由中写复杂业务逻辑
+
+## 📝 日志
 
 ```python
 from app.core.logger import logger
 
-logger.info("Action", key=value)
-logger.error("Error", error=str(e))
+# ✅ 正确
+logger.info("User created", user_id=123)
+logger.error("Failed", error=str(e))
+
+# ❌ 错误
+print("debug")
 ```
 
-NEVER use `print()` statements.
-
-## Configuration
-
-ALWAYS use settings:
+## ⚙️ 配置
 
 ```python
 from app.core.config import settings
 
-value = settings.database_url
+# ✅ 正确
+db_url = settings.database_url
+
+# ❌ 错误
+import os
+db_url = os.getenv("DATABASE_URL")
 ```
 
-NEVER access `os.environ` or `os.getenv()` directly.
+## 📁 目录结构
 
-## Protected Files
+| 目录 | 用途 |
+|------|------|
+| `src/app/api/v1/` | API 路由 |
+| `src/app/core/` | ⚠️ 核心模块 (勿改) |
+| `src/app/models/` | SQLAlchemy 模型 |
+| `src/app/schemas/` | Pydantic Schema |
+| `src/app/services/` | 业务逻辑 |
+| `tests/` | 测试文件 |
 
-DO NOT modify files in `src/app/core/`:
-- config.py
-- logger.py
+## 🔧 新增 API
 
-## Project Structure
+1. 创建 Schema: `src/app/schemas/[模块].py`
+2. 创建路由: `src/app/api/v1/[模块].py`
+3. 注册路由: `src/app/api/v1/router.py`
 
-- `src/app/api/v1/` - API route handlers
-- `src/app/models/` - SQLAlchemy models
-- `src/app/schemas/` - Pydantic schemas
-- `src/app/services/` - Business logic
-- `tests/` - Test files
+```python
+# src/app/api/v1/items.py
+from fastapi import APIRouter
+from app.core.logger import logger
 
-## Adding Endpoints
+router = APIRouter()
 
-1. Create handler in `src/app/api/v1/`
-2. Create schema in `src/app/schemas/`
-3. Register in `src/app/api/v1/router.py`
+@router.get("")
+async def list_items():
+    logger.info("Listing items")
+    return []
+```
 
-## Dependencies
+## 🛡️ 错误处理
 
-- FastAPI {{ dependencies.fastapi }}
-- SQLAlchemy {{ dependencies.sqlalchemy }}
-- Pydantic {{ dependencies.pydantic }}
+```python
+from fastapi import HTTPException
+
+raise HTTPException(status_code=404, detail="Not found")
+```
+
+## 📋 命令
+
+```bash
+cd src && uv run uvicorn app.main:app --reload  # 开发
+uv run pytest                                    # 测试
+uv run ruff check src/                           # 检查
+```

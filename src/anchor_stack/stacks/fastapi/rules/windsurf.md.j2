@@ -1,39 +1,61 @@
-# {{ app_name | pascal_case }} - Windsurf Rules
+# {{ app_name | pascal_case }} - 项目规范
 
-## Project Type
-FastAPI Backend Application (Anchor Stack v{{ stack_version }})
+> Anchor Stack v{{ stack_version }} | FastAPI {{ dependencies.fastapi }}
 
-## Core Conventions
+## 禁止事项
 
-### Logging
-Use the logger module for all logging:
+| ❌ 禁止 | ✅ 正确 |
+|--------|--------|
+| `print()` | `logger.info()` |
+| `os.getenv()` | `settings.xxx` |
+| 修改 `core/*` | 核心文件禁止修改 |
+
+## 日志
+
 ```python
 from app.core.logger import logger
-logger.info("Message", context=value)
-```
-Never use print() statements.
 
-### Configuration
-Use settings for all configuration:
+logger.info("Action", user_id=123)
+logger.error("Failed", error=str(e))
+```
+
+## 配置
+
 ```python
 from app.core.config import settings
-value = settings.database_url
+
+db_url = settings.database_url
 ```
-Never access os.environ directly.
 
-### Protected Files
-Do not modify:
-- src/app/core/config.py
-- src/app/core/logger.py
+## 目录结构
 
-## Structure
-- src/app/api/v1/ - Route handlers
-- src/app/models/ - Database models
-- src/app/schemas/ - Pydantic schemas
-- src/app/services/ - Business logic
+- `src/app/api/v1/` - API 路由
+- `src/app/core/` - ⚠️ 核心模块 (勿改)
+- `src/app/models/` - SQLAlchemy 模型
+- `src/app/schemas/` - Pydantic Schema
+- `src/app/services/` - 业务逻辑
 
-## Stack
-- FastAPI {{ dependencies.fastapi }}
-- SQLAlchemy {{ dependencies.sqlalchemy }}
-- Pydantic {{ dependencies.pydantic }}
-- Python 3.10+
+## 新增 API
+
+1. Schema: `src/app/schemas/[模块].py`
+2. 路由: `src/app/api/v1/[模块].py`
+3. 注册: `src/app/api/v1/router.py`
+
+```python
+from fastapi import APIRouter
+from app.core.logger import logger
+
+router = APIRouter()
+
+@router.get("")
+async def list_items():
+    logger.info("Listing items")
+    return []
+```
+
+## 命令
+
+```bash
+cd src && uv run uvicorn app.main:app --reload
+uv run pytest
+```

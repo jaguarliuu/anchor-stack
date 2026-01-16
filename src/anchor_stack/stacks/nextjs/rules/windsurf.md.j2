@@ -1,48 +1,82 @@
-# Project Rules - {{ app_name }}
+# {{ app_name | pascal_case }} - 项目规范
 
-## Project Overview
-- **Name**: {{ app_name }}
-- **Stack**: Next.js {{ stack_version }} (App Router)
-- **Framework**: React 19 + TypeScript
+> Anchor Stack v{{ stack_version }} | Next.js {{ dependencies.next }} + React {{ dependencies.react }}
 
-## Logging Standards
+## 禁止事项
 
-Use the built-in logger from `@/lib/core/logger`:
+| ❌ 禁止 | ✅ 正确 |
+|--------|--------|
+| `console.log()` | `logger.info()` |
+| `process.env.XXX` | `config.appName` / `getServerConfig()` |
+| 修改 `src/lib/core/*` | 核心文件禁止修改 |
+
+## 日志
 
 ```typescript
 import { logger } from '@/lib/core/logger';
 
-logger.info('Message', { context: 'value' });
-logger.error('Error', { error: err.message });
+logger.info('Action', { userId: 123 });
+logger.error('Failed', { error: err.message });
 ```
 
-**Never use console.log directly.**
-
-## Configuration
-
-Use the config module from `@/lib/core/config`:
+## 配置
 
 ```typescript
 import { config, getServerConfig } from '@/lib/core/config';
+
+// 客户端
+const appName = config.appName;
+
+// 服务端
+const apiKey = getServerConfig().apiKey;
 ```
 
-**Never access process.env directly.**
+## 目录结构
 
-## Directory Guide
+- `src/app/` - Next.js App Router
+- `src/app/api/` - API 路由
+- `src/components/` - React 组件
+- `src/lib/core/` - ⚠️ 核心模块 (勿改)
+- `src/lib/utils/` - 工具函数
+- `src/services/` - 业务逻辑
 
-| Directory | Purpose | Modifiable? |
-|-----------|---------|-------------|
-| `src/app/` | Pages, routes | ✅ Yes |
-| `src/components/` | React components | ✅ Yes |
-| `src/services/` | Business logic | ✅ Yes |
-| `src/lib/core/` | Framework core | ⚠️ Caution |
-| `src/lib/utils/` | Utilities | ✅ Yes |
-| `src/types/` | TypeScript types | ✅ Yes |
+## 新增页面
 
-## Prohibited
+创建 `src/app/[路由]/page.tsx`:
 
-- Using console.log
-- Accessing process.env directly
-- Modifying src/lib/core/ without understanding
-- Deleting anchor.config.json
-- Hardcoding secrets
+```typescript
+import { logger } from '@/lib/core/logger';
+
+export default function Page() {
+  logger.info('Page rendered');
+  return <main>Content</main>;
+}
+```
+
+## 新增 API
+
+创建 `src/app/api/[路由]/route.ts`:
+
+```typescript
+import { NextRequest } from 'next/server';
+import { logger } from '@/lib/core/logger';
+import { apiSuccess, apiError } from '@/lib/utils/api-response';
+
+export async function GET(request: NextRequest) {
+  logger.info('GET /api/example');
+  try {
+    return apiSuccess({ data: [] });
+  } catch (error) {
+    logger.error('Failed', { error: String(error) });
+    return apiError('Internal error', 500);
+  }
+}
+```
+
+## 命令
+
+```bash
+npm run dev      # 开发服务器
+npm run build    # 构建
+npm run lint     # 代码检查
+```
