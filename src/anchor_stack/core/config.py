@@ -105,7 +105,9 @@ class Settings(BaseSettings):
     @staticmethod
     def _get_package_root() -> Path:
         """Get the root directory of the installed package."""
-        return Path(__file__).parent.parent.parent.parent
+        # config.py is at anchor_stack/core/config.py
+        # package root is anchor_stack/
+        return Path(__file__).parent.parent
 
 
 @lru_cache
