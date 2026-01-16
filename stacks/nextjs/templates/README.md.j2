@@ -1,0 +1,87 @@
+# {{ app_name }}
+
+> {{ app_description }}
+
+Built with [Anchor Stack](https://github.com/anchor-stack/anchor-stack) - Next.js {{ stack_version }}
+
+## Getting Started
+
+```bash
+# Install dependencies
+npm install
+
+# Copy environment variables
+cp .env.example .env.local
+
+# Start development server
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Project Structure
+
+```
+src/
+├── app/                 # Pages and API routes (App Router)
+│   └── api/            # API endpoints
+├── components/         # React components
+│   └── ui/            # UI primitives (Button, etc.)
+├── lib/
+│   ├── core/          # Framework core (logger, config)
+│   └── utils/         # Utility functions
+├── services/          # Business logic
+└── types/             # TypeScript definitions
+```
+
+## Key Features
+
+### Logging
+
+Use the built-in logger instead of console.log:
+
+```typescript
+import { logger } from '@/lib/core/logger';
+
+logger.info('User logged in', { userId: user.id });
+logger.error('Failed to fetch', { error: err.message });
+```
+
+### Configuration
+
+Access environment variables through the config module:
+
+```typescript
+import { config, getServerConfig } from '@/lib/core/config';
+
+// Client-safe config
+const appName = config.appName;
+
+// Server-only config
+const apiKey = getServerConfig().apiKey;
+```
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run format` | Format with Prettier |
+| `npm run type-check` | Run TypeScript check |
+
+## AI Assistance
+
+This project includes AI rules files for better coding assistance:
+
+- `.cursor/rules/` - Cursor IDE rules
+- `CLAUDE.md` - Claude Code instructions
+- `.windsurfrules` - Windsurf rules
+
+These files help AI tools understand project conventions.
+
+## License
+
+MIT

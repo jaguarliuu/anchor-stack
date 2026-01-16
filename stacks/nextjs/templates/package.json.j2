@@ -1,0 +1,27 @@
+{
+  "name": "{{ app_name }}",
+  "version": "0.1.0",
+  "private": true,
+  "description": "{{ app_description }}",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "format": "prettier --write .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    {%- for name, version in dependencies.items() %}
+    "{{ name }}": "{{ version }}"{{ "," if not loop.last }}
+    {%- endfor %}
+  },
+  "devDependencies": {
+    {%- for name, version in dev_dependencies.items() %}
+    "{{ name }}": "{{ version }}"{{ "," if not loop.last }}
+    {%- endfor %}
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

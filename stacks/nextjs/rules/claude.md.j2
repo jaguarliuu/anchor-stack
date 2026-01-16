@@ -1,0 +1,103 @@
+# CLAUDE.md - Project Instructions for {{ app_name }}
+
+This file contains instructions for Claude Code when working on this project.
+
+## Project Overview
+- **Project Name**: {{ app_name }}
+- **Stack**: Next.js {{ stack_version }} (App Router) + React 19 + TypeScript
+- **Created with**: Anchor Stack
+
+## Directory Structure
+
+```
+src/
+├── app/                 # Pages and routes (App Router)
+│   └── api/            # API routes
+├── components/         # React components
+│   └── ui/            # UI primitives
+├── lib/
+│   ├── core/          # ⚠️ Framework core - do not modify
+│   └── utils/         # Utility functions
+├── services/          # Business logic
+└── types/             # TypeScript definitions
+```
+
+## Code Standards
+
+### Logging - CRITICAL
+ALWAYS use the built-in logger. NEVER use console.log.
+
+```typescript
+import { logger } from '@/lib/core/logger';
+
+// ✅ CORRECT
+logger.info('Operation completed', { userId: 123 });
+logger.error('Operation failed', { error: err.message });
+
+// ❌ WRONG - Never do this
+console.log('Operation completed');
+```
+
+### Configuration
+ALWAYS use the config module for environment variables.
+
+```typescript
+import { config, getServerConfig } from '@/lib/core/config';
+
+// ✅ CORRECT
+const appName = config.appName;
+const apiKey = getServerConfig().apiKey; // Server only
+
+// ❌ WRONG
+const bad = process.env.API_KEY;
+```
+
+### API Routes Pattern
+```typescript
+import { logger } from '@/lib/core/logger';
+import { apiError, apiSuccess } from '@/lib/utils/api-response';
+
+export async function POST(request: NextRequest) {
+  logger.info('Request received', { path: '/api/...' });
+
+  try {
+    // ... handle request
+    return apiSuccess(data);
+  } catch (error) {
+    logger.error('Request failed', { error: String(error) });
+    return apiError('Something went wrong', 500);
+  }
+}
+```
+
+## Adding Features
+
+### New Page
+1. Create `src/app/<route>/page.tsx`
+2. Follow Next.js App Router conventions
+3. Add logging for important operations
+
+### New API Endpoint
+1. Create `src/app/api/<route>/route.ts`
+2. Use `apiError` and `apiSuccess` helpers
+3. Log request entry and completion
+
+### New Component
+1. Create in `src/components/`
+2. Export from `index.ts`
+3. Use TypeScript for props
+
+## Prohibited Actions
+- ❌ Do NOT use `console.log` - use `logger`
+- ❌ Do NOT modify `src/lib/core/` without discussion
+- ❌ Do NOT access `process.env` directly
+- ❌ Do NOT delete `anchor.config.json`
+- ❌ Do NOT hardcode secrets
+
+## When Debugging
+
+Always ask for:
+1. Full error logs (from logger, not console)
+2. Request parameters
+3. Environment (development/production)
+4. Recent code changes

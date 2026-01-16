@@ -1,0 +1,221 @@
+import Link from 'next/link';
+
+export default function Home() {
+  return (
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      {/* Header */}
+      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-10">
+        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">⚓</span>
+            <span className="font-bold text-xl">{{ app_name | pascal_case }}</span>
+          </div>
+          <a
+            href="/api/health"
+            className="text-sm text-gray-500 hover:text-gray-900 transition"
+          >
+            Health Check →
+          </a>
+        </div>
+      </header>
+
+      {/* Hero */}
+      <section className="max-w-5xl mx-auto px-6 py-16">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Welcome to {{ app_name | pascal_case }}
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Built with <strong>Anchor Stack</strong> - an AI-friendly engineering foundation
+            with stable versions, unified logging, and pluggable capabilities.
+          </p>
+        </div>
+
+        {/* Quick Start */}
+        <div className="bg-white rounded-xl shadow-sm border p-8 mb-8">
+          <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
+            <span>🚀</span> Quick Start
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="font-medium text-gray-900 mb-2">Development</h3>
+              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg text-sm overflow-x-auto">
+{`npm run dev      # Start dev server
+npm run build    # Build for production
+npm run lint     # Run linter`}
+              </pre>
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-900 mb-2">Project Structure</h3>
+              <pre className="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto text-gray-700">
+{`src/
+├── app/          # Pages & API routes
+├── components/   # React components
+├── lib/core/     # ⚠️ Framework core
+├── lib/utils/    # Utilities
+└── services/     # Business logic`}
+              </pre>
+            </div>
+          </div>
+        </div>
+
+        {/* Key Features */}
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <FeatureCard
+            icon="📝"
+            title="Standardized Logging"
+            description="Use logger instead of console.log. AI knows where and how to add logs."
+            code={`import { logger } from '@/lib/core/logger';
+
+logger.info('User action', { userId: 123 });
+logger.error('Failed', { error: err.message });`}
+          />
+          <FeatureCard
+            icon="⚙️"
+            title="Config Management"
+            description="Type-safe configuration. Never access process.env directly."
+            code={`import { config } from '@/lib/core/config';
+
+const appName = config.appName;
+const isProduction = config.isProduction;`}
+          />
+          <FeatureCard
+            icon="🛡️"
+            title="API Helpers"
+            description="Consistent API responses with built-in error handling."
+            code={`import { apiSuccess, apiError } from '@/lib/utils/api-response';
+
+return apiSuccess({ data });
+return apiError('Not found', 404);`}
+          />
+        </div>
+
+        {/* AI Rules */}
+        <div className="bg-blue-50 rounded-xl p-8 mb-8 border border-blue-100">
+          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+            <span>🤖</span> AI Rules Files
+          </h2>
+          <p className="text-gray-700 mb-6">
+            This project includes special files that help AI coding assistants understand
+            your project structure and conventions. They enable commands like
+            <code className="bg-blue-100 px-2 py-1 rounded mx-1">"add logging to this function"</code>
+            to work correctly.
+          </p>
+          <div className="grid md:grid-cols-2 gap-4">
+            <RuleFile
+              name="CLAUDE.md"
+              tool="Claude Code"
+              description="Instructions for Claude Code assistant"
+            />
+            <RuleFile
+              name=".cursor/rules/"
+              tool="Cursor"
+              description="Rules for Cursor IDE"
+            />
+            <RuleFile
+              name=".windsurfrules"
+              tool="Windsurf"
+              description="Rules for Windsurf editor"
+            />
+            <RuleFile
+              name="anchor.config.json"
+              tool="Anchor Stack"
+              description="Project configuration tracking"
+            />
+          </div>
+        </div>
+
+        {/* Important Notes */}
+        <div className="bg-amber-50 rounded-xl p-8 border border-amber-100">
+          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+            <span>⚠️</span> Important Conventions
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="font-medium text-green-700 mb-2">✅ Do This</h3>
+              <ul className="space-y-2 text-gray-700">
+                <li>• Use <code className="bg-green-100 px-1 rounded">logger.info()</code> for logging</li>
+                <li>• Use <code className="bg-green-100 px-1 rounded">config</code> for environment variables</li>
+                <li>• Add new pages in <code className="bg-green-100 px-1 rounded">src/app/</code></li>
+                <li>• Add components in <code className="bg-green-100 px-1 rounded">src/components/</code></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-medium text-red-700 mb-2">❌ Avoid This</h3>
+              <ul className="space-y-2 text-gray-700">
+                <li>• Using <code className="bg-red-100 px-1 rounded">console.log()</code> directly</li>
+                <li>• Accessing <code className="bg-red-100 px-1 rounded">process.env</code> directly</li>
+                <li>• Modifying <code className="bg-red-100 px-1 rounded">src/lib/core/</code> files</li>
+                <li>• Deleting <code className="bg-red-100 px-1 rounded">anchor.config.json</code></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t bg-gray-50 mt-16">
+        <div className="max-w-5xl mx-auto px-6 py-8 text-center text-gray-500">
+          <p>
+            Built with{' '}
+            <a
+              href="https://github.com/anchor-stack/anchor-stack"
+              className="text-blue-600 hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Anchor Stack
+            </a>
+            {' '}— AI-friendly engineering foundation
+          </p>
+          <p className="text-sm mt-2">
+            Stack: Next.js {{ stack_version }} • Ready for AI-assisted development
+          </p>
+        </div>
+      </footer>
+    </main>
+  );
+}
+
+function FeatureCard({
+  icon,
+  title,
+  description,
+  code,
+}: {
+  icon: string;
+  title: string;
+  description: string;
+  code: string;
+}) {
+  return (
+    <div className="bg-white rounded-xl shadow-sm border p-6">
+      <div className="text-2xl mb-3">{icon}</div>
+      <h3 className="font-semibold text-gray-900 mb-2">{title}</h3>
+      <p className="text-gray-600 text-sm mb-4">{description}</p>
+      <pre className="bg-gray-900 text-green-400 p-3 rounded-lg text-xs overflow-x-auto">
+        {code}
+      </pre>
+    </div>
+  );
+}
+
+function RuleFile({
+  name,
+  tool,
+  description,
+}: {
+  name: string;
+  tool: string;
+  description: string;
+}) {
+  return (
+    <div className="bg-white rounded-lg p-4 border">
+      <div className="flex items-center justify-between mb-1">
+        <code className="text-blue-600 font-medium">{name}</code>
+        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">{tool}</span>
+      </div>
+      <p className="text-sm text-gray-600">{description}</p>
+    </div>
+  );
+}

@@ -1,0 +1,48 @@
+# Project Rules - {{ app_name }}
+
+## Project Overview
+- **Name**: {{ app_name }}
+- **Stack**: Next.js {{ stack_version }} (App Router)
+- **Framework**: React 19 + TypeScript
+
+## Logging Standards
+
+Use the built-in logger from `@/lib/core/logger`:
+
+```typescript
+import { logger } from '@/lib/core/logger';
+
+logger.info('Message', { context: 'value' });
+logger.error('Error', { error: err.message });
+```
+
+**Never use console.log directly.**
+
+## Configuration
+
+Use the config module from `@/lib/core/config`:
+
+```typescript
+import { config, getServerConfig } from '@/lib/core/config';
+```
+
+**Never access process.env directly.**
+
+## Directory Guide
+
+| Directory | Purpose | Modifiable? |
+|-----------|---------|-------------|
+| `src/app/` | Pages, routes | ✅ Yes |
+| `src/components/` | React components | ✅ Yes |
+| `src/services/` | Business logic | ✅ Yes |
+| `src/lib/core/` | Framework core | ⚠️ Caution |
+| `src/lib/utils/` | Utilities | ✅ Yes |
+| `src/types/` | TypeScript types | ✅ Yes |
+
+## Prohibited
+
+- Using console.log
+- Accessing process.env directly
+- Modifying src/lib/core/ without understanding
+- Deleting anchor.config.json
+- Hardcoding secrets

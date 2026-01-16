@@ -1,0 +1,63 @@
+# Next.js Stack Definition
+# Version: 2026.1
+# A full-stack Next.js template with App Router, TypeScript, and built-in logging
+
+name: nextjs
+version: "2026.1"
+display_name: "Next.js Full-Stack"
+description: |
+  Enterprise-grade Next.js template with:
+  - Next.js 16 + React 19 + TypeScript
+  - App Router with best practices
+  - Built-in logging framework
+  - Configuration management
+  - Type-safe API routes
+
+# Runtime requirements
+runtime:
+  node: "20.x"
+  npm: "10.x"
+
+# Production dependencies (curated stable versions)
+dependencies:
+  next: "16.1.2"
+  react: "19.2.3"
+  react-dom: "19.2.3"
+  zod: "3.24.0"
+
+# Development dependencies
+dev_dependencies:
+  typescript: "5.9.3"
+  "@types/node": "22.15.21"
+  "@types/react": "19.2.8"
+  "@types/react-dom": "19.2.3"
+  eslint: "9.28.0"
+  eslint-config-next: "16.1.2"
+  prettier: "3.5.3"
+  tailwindcss: "3.4.17"
+  postcss: "8.5.4"
+  autoprefixer: "10.4.21"
+
+# Directory structure to create
+directory_structure:
+  - src/
+  - src/app/
+  - src/app/api/
+  - src/components/
+  - src/components/ui/
+  - src/lib/
+  - src/lib/core/
+  - src/lib/utils/
+  - src/services/
+  - src/types/
+  - public/
+
+# Built-in features
+builtin_features:
+  logging: true
+  config_management: true
+  error_boundary: true
+
+# Template configuration
+templates_dir: templates
+rules_dir: rules

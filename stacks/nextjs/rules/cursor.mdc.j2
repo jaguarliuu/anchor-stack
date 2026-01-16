@@ -1,0 +1,128 @@
+---
+description: Project rules and conventions for {{ app_name }}
+globs: ["**/*"]
+---
+
+# Project Rules - {{ app_name }}
+
+## Project Overview
+- **Name**: {{ app_name }}
+- **Stack**: Next.js {{ stack_version }} (App Router)
+- **Framework**: React 19 + TypeScript
+
+## Directory Structure
+
+### Modifiable Directories
+- `src/app/` - Pages and routes (App Router)
+- `src/components/` - React components
+- `src/services/` - Business logic and API clients
+- `src/types/` - TypeScript type definitions
+- `src/lib/utils/` - Utility functions
+
+### Protected Directories (Do NOT modify without understanding)
+- `src/lib/core/` - Framework core (logger, config)
+
+## Logging Standards
+
+### ALWAYS use the built-in logger
+```typescript
+import { logger } from '@/lib/core/logger';
+
+// ✅ Correct
+logger.info('User logged in', { userId: user.id });
+logger.error('Payment failed', { orderId, error: error.message });
+logger.debug('Cache hit', { key });
+
+// ❌ NEVER use console.log
+console.log('User logged in');  // Wrong!
+```
+
+### Log Level Guidelines
+- `debug`: Development info, cache hits, internal state
+- `info`: Business operations (login, purchase, api calls)
+- `warn`: Recoverable issues, deprecation warnings
+- `error`: Failures that need attention
+
+### Where to Add Logs
+1. **API Routes**: Log at entry and exit
+2. **Error Boundaries**: Log caught errors
+3. **User Actions**: Log important actions (login, purchase)
+4. **External API Calls**: Log requests and responses
+
+## Configuration
+
+### ALWAYS use the config module
+```typescript
+import { config, getServerConfig } from '@/lib/core/config';
+
+// ✅ Client-safe config
+const appName = config.appName;
+
+// ✅ Server-only config (in Server Components/API routes)
+const secret = getServerConfig().apiKey;
+
+// ❌ NEVER access process.env directly
+const bad = process.env.API_KEY;  // Wrong!
+```
+
+## Adding New Features
+
+### New Page
+1. Create directory in `src/app/`
+2. Add `page.tsx` following App Router conventions
+3. Add logging for page renders if needed
+
+### New API Endpoint
+1. Create route in `src/app/api/`
+2. Use `apiError` and `apiSuccess` from `@/lib/utils/api-response`
+3. Add request/response logging
+
+### New Component
+1. Create in `src/components/` (or `src/components/ui/` for primitives)
+2. Export from `index.ts` barrel file
+3. Use TypeScript interfaces for props
+
+## API Route Pattern
+
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/core/logger';
+import { apiError, apiSuccess, handleApiError } from '@/lib/utils/api-response';
+
+export async function POST(request: NextRequest) {
+  logger.info('API request received', { path: '/api/example' });
+
+  try {
+    const body = await request.json();
+
+    // Validate input
+    if (!body.email) {
+      return apiError('Email is required', 400);
+    }
+
+    // Process request
+    const result = await processData(body);
+
+    logger.info('API request completed', { success: true });
+    return apiSuccess(result);
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+```
+
+## Prohibited Actions
+- ❌ Do NOT use `console.log` - use `logger`
+- ❌ Do NOT access `process.env` directly - use `config`
+- ❌ Do NOT modify `src/lib/core/` files
+- ❌ Do NOT delete `anchor.config.json`
+- ❌ Do NOT hardcode API keys or secrets
+- ❌ Do NOT skip error handling in API routes
+
+## Debug Guide
+
+When encountering issues:
+1. Check logs first (not console)
+2. Provide the full error message
+3. Include relevant request parameters
+4. Mention the environment (dev/prod)
