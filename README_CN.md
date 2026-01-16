@@ -2,6 +2,7 @@
 
 # Anchor Stack
 
+<img src="https://img.shields.io/pypi/v/anchor-stack?style=for-the-badge&color=blue" alt="PyPI Version"/>
 <img src="https://img.shields.io/badge/python-3.10+-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.10+"/>
 <img src="https://img.shields.io/badge/MCP-1.25+-green?style=for-the-badge&logo=anthropic&logoColor=white" alt="MCP 1.25+"/>
 <img src="https://img.shields.io/badge/license-MIT-orange?style=for-the-badge" alt="MIT License"/>
@@ -147,7 +148,7 @@ my-app/
 
 ```typescript
 scaffold_project({
-  stack_name: "nextjs",        // 技术栈类型
+  stack_name: "nextjs",        // 技术栈类型: "nextjs" 或 "fastapi"
   project_name: "my-app",      // 项目名称
   target_dir: "/path/to/dir"   // 目标目录
 })
@@ -178,8 +179,8 @@ doctor({
 
 | Stack | 版本 | 描述 |
 |-------|------|------|
-| `nextjs` | 2026.1 | Next.js 16 + React 19 + TypeScript 5.9 + Tailwind CSS |
-| `fastapi` | 2026.1 | FastAPI 0.128 + SQLAlchemy 2.0 + Pydantic v2 |
+| `nextjs` | 2026.1 | Next.js 15 + React 19 + TypeScript 5.7 + Tailwind CSS 4 |
+| `fastapi` | 2026.1 | FastAPI 0.115 + SQLAlchemy 2.0 + Pydantic v2 |
 
 ## 可用的能力包
 
@@ -254,11 +255,35 @@ uv run ruff check src/
 uv run anchor-stack serve
 ```
 
+## 更新日志
+
+### v0.1.3 (最新)
+- **增强 AI Rules** - 全面的规则模板，包含禁止事项、日志规范、配置使用、目录结构、新增功能指南
+- **修复** pytest 版本冲突 (pytest-asyncio 要求 pytest>=8.2,<9)
+- **修复** Pydantic EmailStr 缺少 email-validator 依赖
+- **修复** 规则模板显示错误的技术栈内容
+- **修复** src/ 布局的 pytest 配置 (添加 pythonpath)
+
+### v0.1.2
+- 修复 src 布局的 pytest 配置
+- 重构包结构以支持 PyPI 发布
+
+### v0.1.1
+- 添加 email-validator 依赖
+- 修复规则生成器使用特定技术栈模板
+
+### v0.1.0
+- 首次发布
+- 核心 MCP Server 实现
+- Next.js 和 FastAPI 技术栈模板
+- AI Rules 生成 (CLAUDE.md, Cursor, Windsurf)
+
 ## 路线图
 
 - [x] 核心 MCP Server 实现
 - [x] Next.js 技术栈模板
 - [x] FastAPI 技术栈模板
+- [x] 完善的 AI Rules 模板
 - [ ] 数据库能力包 (PostgreSQL)
 - [ ] AI 能力包 (LangGraph)
 - [ ] 认证能力包 (NextAuth/OAuth)

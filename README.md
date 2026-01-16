@@ -2,6 +2,7 @@
 
 # Anchor Stack
 
+<img src="https://img.shields.io/pypi/v/anchor-stack?style=for-the-badge&color=blue" alt="PyPI Version"/>
 <img src="https://img.shields.io/badge/python-3.10+-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.10+"/>
 <img src="https://img.shields.io/badge/MCP-1.25+-green?style=for-the-badge&logo=anthropic&logoColor=white" alt="MCP 1.25+"/>
 <img src="https://img.shields.io/badge/license-MIT-orange?style=for-the-badge" alt="MIT License"/>
@@ -145,7 +146,7 @@ Create a new project from a Stack template.
 
 ```typescript
 scaffold_project({
-  stack_name: "nextjs",        // Stack type
+  stack_name: "nextjs",        // Stack type: "nextjs" or "fastapi"
   project_name: "my-app",      // Project name
   target_dir: "/path/to/dir"   // Target directory
 })
@@ -176,8 +177,8 @@ doctor({
 
 | Stack | Version | Description |
 |-------|---------|-------------|
-| `nextjs` | 2026.1 | Next.js 16 + React 19 + TypeScript 5.9 + Tailwind CSS |
-| `fastapi` | 2026.1 | FastAPI 0.128 + SQLAlchemy 2.0 + Pydantic v2 |
+| `nextjs` | 2026.1 | Next.js 15 + React 19 + TypeScript 5.7 + Tailwind CSS 4 |
+| `fastapi` | 2026.1 | FastAPI 0.115 + SQLAlchemy 2.0 + Pydantic v2 |
 
 ## Available Packs
 
@@ -252,11 +253,35 @@ uv run ruff check src/
 uv run anchor-stack serve
 ```
 
+## Changelog
+
+### v0.1.3 (Latest)
+- **Enhanced AI Rules** - Comprehensive rules templates with prohibited actions, logging standards, config usage, directory structure, and step-by-step feature guides
+- **Fixed** pytest version conflict (pytest-asyncio requires pytest>=8.2,<9)
+- **Fixed** missing email-validator dependency for Pydantic EmailStr
+- **Fixed** rules templates showing wrong stack content
+- **Fixed** pytest configuration for src/ layout (added pythonpath)
+
+### v0.1.2
+- Fixed pytest configuration for src layout
+- Package restructuring for PyPI distribution
+
+### v0.1.1
+- Added email-validator dependency
+- Fixed rules generator to use stack-specific templates
+
+### v0.1.0
+- Initial release
+- Core MCP Server implementation
+- Next.js and FastAPI stack templates
+- AI Rules generation (CLAUDE.md, Cursor, Windsurf)
+
 ## Roadmap
 
 - [x] Core MCP Server implementation
 - [x] Next.js Stack template
 - [x] FastAPI Stack template
+- [x] Comprehensive AI Rules templates
 - [ ] Database Pack (PostgreSQL)
 - [ ] AI Pack (LangGraph)
 - [ ] Auth Pack (NextAuth/OAuth)
