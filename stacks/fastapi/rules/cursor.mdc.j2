@@ -1,0 +1,59 @@
+---
+description: Rules for {{ app_name | pascal_case }} FastAPI project
+globs: ["src/**/*.py", "tests/**/*.py"]
+---
+
+# {{ app_name | pascal_case }} Project Rules
+
+This FastAPI project follows Anchor Stack conventions.
+
+## Logging
+
+ALWAYS use the logger module:
+
+```python
+from app.core.logger import logger
+
+logger.info("Action", key=value)
+logger.error("Error", error=str(e))
+```
+
+NEVER use `print()` statements.
+
+## Configuration
+
+ALWAYS use settings:
+
+```python
+from app.core.config import settings
+
+value = settings.database_url
+```
+
+NEVER access `os.environ` or `os.getenv()` directly.
+
+## Protected Files
+
+DO NOT modify files in `src/app/core/`:
+- config.py
+- logger.py
+
+## Project Structure
+
+- `src/app/api/v1/` - API route handlers
+- `src/app/models/` - SQLAlchemy models
+- `src/app/schemas/` - Pydantic schemas
+- `src/app/services/` - Business logic
+- `tests/` - Test files
+
+## Adding Endpoints
+
+1. Create handler in `src/app/api/v1/`
+2. Create schema in `src/app/schemas/`
+3. Register in `src/app/api/v1/router.py`
+
+## Dependencies
+
+- FastAPI {{ dependencies.fastapi }}
+- SQLAlchemy {{ dependencies.sqlalchemy }}
+- Pydantic {{ dependencies.pydantic }}

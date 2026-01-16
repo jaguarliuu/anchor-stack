@@ -1,0 +1,90 @@
+# {{ app_name | pascal_case }}
+
+> Built with [Anchor Stack](https://github.com/anthropics/anchor-stack) - AI-friendly engineering foundation
+
+## Quick Start
+
+```bash
+# Install dependencies
+uv sync
+
+# Run development server
+uv run uvicorn app.main:app --reload
+
+# Run tests
+uv run pytest
+
+# Run linting
+uv run ruff check src/
+```
+
+## Project Structure
+
+```
+{{ app_name }}/
+├── src/app/
+│   ├── api/v1/          # API route handlers
+│   ├── core/            # Core modules (DO NOT MODIFY)
+│   │   ├── config.py    # Configuration management
+│   │   └── logger.py    # Logging framework
+│   ├── models/          # SQLAlchemy models
+│   ├── schemas/         # Pydantic schemas
+│   └── services/        # Business logic
+├── tests/               # Test files
+├── CLAUDE.md            # AI rules for Claude
+└── anchor.config.json   # Anchor Stack metadata
+```
+
+## Conventions
+
+### Logging
+
+Always use the logger module instead of `print()`:
+
+```python
+from app.core.logger import logger
+
+logger.info("User logged in", user_id=123)
+logger.error("Request failed", error=str(e), endpoint="/api/users")
+```
+
+### Configuration
+
+Access configuration through the config module:
+
+```python
+from app.core.config import settings
+
+database_url = settings.database_url
+debug_mode = settings.debug
+```
+
+### API Responses
+
+Use consistent response schemas:
+
+```python
+from app.schemas.response import ApiResponse
+
+return ApiResponse(success=True, data={"user": user})
+```
+
+## API Documentation
+
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+- OpenAPI JSON: http://localhost:8000/openapi.json
+
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `APP_NAME` | `{{ app_name }}` | Application name |
+| `DEBUG` | `false` | Enable debug mode |
+| `DATABASE_URL` | `sqlite:///./app.db` | Database connection URL |
+| `LOG_LEVEL` | `INFO` | Logging level |
+| `LOG_JSON` | `false` | Output logs as JSON |
+
+## License
+
+MIT

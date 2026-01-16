@@ -1,0 +1,78 @@
+"""
+{{ app_name | pascal_case }} - FastAPI Application
+
+Built with Anchor Stack - AI-friendly engineering foundation.
+"""
+
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.api.v1.router import api_router
+from app.core.config import settings
+from app.core.logger import logger, setup_logging
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    """Application lifespan handler."""
+    # Startup
+    setup_logging()
+    logger.info(
+        "Application starting",
+        app_name=settings.app_name,
+        debug=settings.debug,
+    )
+    yield
+    # Shutdown
+    logger.info("Application shutting down")
+
+
+app = FastAPI(
+    title=settings.app_name,
+    description="{{ app_name | pascal_case }} API - Built with Anchor Stack",
+    version="0.1.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    lifespan=lifespan,
+)
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Include API router
+app.include_router(api_router, prefix="/api/v1")
+
+
+@app.get("/health")
+async def health_check() -> dict:
+    """Health check endpoint."""
+    return {
+        "status": "healthy",
+        "app_name": settings.app_name,
+        "version": "0.1.0",
+    }
+
+
+def run() -> None:
+    """Run the application using uvicorn."""
+    import uvicorn
+
+    uvicorn.run(
+        "app.main:app",
+        host=settings.host,
+        port=settings.port,
+        reload=settings.debug,
+    )
+
+
+if __name__ == "__main__":
+    run()

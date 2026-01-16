@@ -1,0 +1,39 @@
+# {{ app_name | pascal_case }} - Windsurf Rules
+
+## Project Type
+FastAPI Backend Application (Anchor Stack v{{ stack_version }})
+
+## Core Conventions
+
+### Logging
+Use the logger module for all logging:
+```python
+from app.core.logger import logger
+logger.info("Message", context=value)
+```
+Never use print() statements.
+
+### Configuration
+Use settings for all configuration:
+```python
+from app.core.config import settings
+value = settings.database_url
+```
+Never access os.environ directly.
+
+### Protected Files
+Do not modify:
+- src/app/core/config.py
+- src/app/core/logger.py
+
+## Structure
+- src/app/api/v1/ - Route handlers
+- src/app/models/ - Database models
+- src/app/schemas/ - Pydantic schemas
+- src/app/services/ - Business logic
+
+## Stack
+- FastAPI {{ dependencies.fastapi }}
+- SQLAlchemy {{ dependencies.sqlalchemy }}
+- Pydantic {{ dependencies.pydantic }}
+- Python 3.10+

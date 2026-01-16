@@ -177,7 +177,7 @@ doctor({
 | Stack | Version | Description |
 |-------|---------|-------------|
 | `nextjs` | 2026.1 | Next.js 16 + React 19 + TypeScript 5.9 + Tailwind CSS |
-| `python-api` | Coming Soon | FastAPI + SQLAlchemy + Pydantic |
+| `fastapi` | 2026.1 | FastAPI 0.128 + SQLAlchemy 2.0 + Pydantic v2 |
 
 ## Available Packs
 
@@ -256,7 +256,7 @@ uv run anchor-stack serve
 
 - [x] Core MCP Server implementation
 - [x] Next.js Stack template
-- [ ] FastAPI Stack template
+- [x] FastAPI Stack template
 - [ ] Database Pack (PostgreSQL)
 - [ ] AI Pack (LangGraph)
 - [ ] Auth Pack (NextAuth/OAuth)

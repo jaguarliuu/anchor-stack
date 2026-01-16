@@ -179,7 +179,7 @@ doctor({
 | Stack | 版本 | 描述 |
 |-------|------|------|
 | `nextjs` | 2026.1 | Next.js 16 + React 19 + TypeScript 5.9 + Tailwind CSS |
-| `python-api` | 即将推出 | FastAPI + SQLAlchemy + Pydantic |
+| `fastapi` | 2026.1 | FastAPI 0.128 + SQLAlchemy 2.0 + Pydantic v2 |
 
 ## 可用的能力包
 
@@ -258,7 +258,7 @@ uv run anchor-stack serve
 
 - [x] 核心 MCP Server 实现
 - [x] Next.js 技术栈模板
-- [ ] FastAPI 技术栈模板
+- [x] FastAPI 技术栈模板
 - [ ] 数据库能力包 (PostgreSQL)
 - [ ] AI 能力包 (LangGraph)
 - [ ] 认证能力包 (NextAuth/OAuth)

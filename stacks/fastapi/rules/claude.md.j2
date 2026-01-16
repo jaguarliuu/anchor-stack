@@ -1,0 +1,110 @@
+# {{ app_name | pascal_case }} - Claude Code Rules
+
+> This project was generated with [Anchor Stack](https://github.com/anthropics/anchor-stack) v{{ stack_version }}
+
+## Project Overview
+
+This is a FastAPI backend application with:
+- FastAPI {{ dependencies.fastapi }} + Python 3.10+
+- Async SQLAlchemy {{ dependencies.sqlalchemy }}
+- Pydantic {{ dependencies.pydantic }} for validation
+- Built-in logging and configuration
+
+## Critical Rules
+
+### 1. Logging - ALWAYS use the logger module
+
+```python
+# ✅ CORRECT - Use the logger
+from app.core.logger import logger
+
+logger.info("Processing request", user_id=123, endpoint="/users")
+logger.error("Database error", error=str(e), table="users")
+
+# ❌ WRONG - Never use print
+print("Processing request")  # Don't do this
+```
+
+### 2. Configuration - ALWAYS use settings
+
+```python
+# ✅ CORRECT - Use settings
+from app.core.config import settings
+
+database_url = settings.database_url
+debug = settings.debug
+
+# ❌ WRONG - Never access env directly
+import os
+database_url = os.getenv("DATABASE_URL")  # Don't do this
+```
+
+### 3. DO NOT modify core modules
+
+The following files should NOT be modified:
+- `src/app/core/config.py`
+- `src/app/core/logger.py`
+
+## Project Structure
+
+```
+src/app/
+├── api/v1/           # API route handlers
+│   ├── router.py     # Main router
+│   ├── health.py     # Health endpoints
+│   └── users.py      # User endpoints (example)
+├── core/             # ⚠️ DO NOT MODIFY
+│   ├── config.py     # Configuration management
+│   └── logger.py     # Logging framework
+├── models/           # SQLAlchemy models
+├── schemas/          # Pydantic schemas
+├── services/         # Business logic
+└── main.py           # Application entry point
+```
+
+## Adding New Features
+
+### New API Endpoint
+
+1. Create route handler in `src/app/api/v1/`
+2. Create Pydantic schemas in `src/app/schemas/`
+3. Register router in `src/app/api/v1/router.py`
+
+```python
+# src/app/api/v1/items.py
+from fastapi import APIRouter
+from app.core.logger import logger
+
+router = APIRouter()
+
+@router.get("")
+async def list_items():
+    logger.info("Listing items")
+    return []
+```
+
+### New Database Model
+
+1. Create model in `src/app/models/`
+2. Create corresponding schema in `src/app/schemas/`
+
+## Commands
+
+```bash
+# Development
+uv run uvicorn app.main:app --reload
+
+# Testing
+uv run pytest
+
+# Linting
+uv run ruff check src/
+
+# Type checking
+uv run mypy src/
+```
+
+## API Documentation
+
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc

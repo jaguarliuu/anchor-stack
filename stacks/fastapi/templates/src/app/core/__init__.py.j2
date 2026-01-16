@@ -1,0 +1,11 @@
+"""
+Core modules for {{ app_name | pascal_case }}.
+
+IMPORTANT: Do not modify files in this directory unless you know what you're doing.
+These modules provide the foundation for logging and configuration.
+"""
+
+from app.core.config import settings
+from app.core.logger import get_logger, logger, setup_logging
+
+__all__ = ["settings", "logger", "get_logger", "setup_logging"]

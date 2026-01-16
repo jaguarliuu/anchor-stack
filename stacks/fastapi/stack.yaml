@@ -1,0 +1,62 @@
+# FastAPI Stack Definition
+# Version: 2026.1
+# A production-ready FastAPI template with async support, SQLAlchemy, and built-in logging
+
+name: fastapi
+version: "2026.1"
+display_name: "FastAPI Backend"
+description: |
+  Enterprise-grade FastAPI template with:
+  - FastAPI 0.128 + Python 3.10+
+  - Async SQLAlchemy 2.0 with type hints
+  - Pydantic v2 for validation
+  - Built-in logging framework
+  - Configuration management
+  - Health check endpoints
+
+# Runtime requirements
+runtime:
+  python: ">=3.10"
+
+# Production dependencies (curated stable versions)
+dependencies:
+  fastapi: "0.128.0"
+  uvicorn: "0.40.0"
+  pydantic: "2.12.5"
+  pydantic-settings: "2.7.1"
+  sqlalchemy: "2.0.45"
+  alembic: "1.18.1"
+  httpx: "0.28.1"
+  python-dotenv: "1.2.1"
+
+# Development dependencies
+dev_dependencies:
+  pytest: "9.0.2"
+  pytest-asyncio: "0.25.0"
+  pytest-cov: "6.1.1"
+  ruff: "0.9.10"
+  mypy: "1.15.0"
+  pre-commit: "4.2.0"
+
+# Directory structure to create
+directory_structure:
+  - src/
+  - src/app/
+  - src/app/api/
+  - src/app/api/v1/
+  - src/app/core/
+  - src/app/models/
+  - src/app/schemas/
+  - src/app/services/
+  - tests/
+
+# Built-in features
+builtin_features:
+  logging: true
+  config_management: true
+  health_check: true
+  async_support: true
+
+# Template configuration
+templates_dir: templates
+rules_dir: rules
