@@ -1,35 +1,66 @@
+<div align="center">
+
 # Anchor Stack
 
-> AI-friendly engineering foundation with stable versions, unified logging, and pluggable capability packs.
+<img src="https://img.shields.io/badge/python-3.10+-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.10+"/>
+<img src="https://img.shields.io/badge/MCP-1.25+-green?style=for-the-badge&logo=anthropic&logoColor=white" alt="MCP 1.25+"/>
+<img src="https://img.shields.io/badge/license-MIT-orange?style=for-the-badge" alt="MIT License"/>
+<img src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=for-the-badge" alt="PRs Welcome"/>
 
-## What is Anchor Stack?
+**AI-Friendly Engineering Foundation**
 
-Anchor Stack is an MCP (Model Context Protocol) Server that helps you create well-structured projects that AI coding tools can understand and maintain. It solves the problem of projects dying in the Debug phase by providing:
+*Stable versions, unified logging, and pluggable capability packs*
 
-- **Stable Versions**: Curated dependency combinations that work well together
-- **Unified Logging**: Standardized logging framework that AI can use to add meaningful logs
-- **AI Rules**: Documentation that tells AI tools how to work with your project
-- **Pluggable Packs**: Pre-configured capabilities (database, AI, auth) that can be added on demand
+[English](./README.md) | [中文](./README_CN.md)
 
-## Installation
+---
 
-```bash
-pip install anchor-stack
-```
+</div>
 
-Or with uv:
+## Why Anchor Stack?
 
-```bash
-uv pip install anchor-stack
-```
+Have you ever experienced this?
+
+> *"AI helped me write the code, but debugging took longer than writing it myself..."*
+
+The problem isn't the AI - it's that **your project wasn't designed for AI collaboration**.
+
+Anchor Stack solves this by creating projects that are:
+
+| Problem | Solution |
+|---------|----------|
+| Inconsistent logging | Standardized `logger` module - AI knows exactly how to add logs |
+| Environment chaos | Type-safe `config` module - no more `process.env` everywhere |
+| Version conflicts | Curated dependency versions - tested and stable |
+| AI confusion | Rules files that teach AI your project conventions |
+
+## Features
+
+- **Stable Stacks** - Curated technology stacks with version-locked dependencies
+- **Unified Logging** - Standardized logging framework that AI understands
+- **AI Rules** - Auto-generated rules for Claude, Cursor, Windsurf, and more
+- **Pluggable Packs** - Add database, AI, auth capabilities on demand
+- **MCP Native** - Works seamlessly with MCP-compatible AI tools
 
 ## Quick Start
 
-### 1. Configure Your AI Tool
+### Installation
 
-Add to your MCP configuration:
+```bash
+# Using pip
+pip install anchor-stack
 
-**Claude Desktop** (`claude_desktop_config.json`):
+# Using uv (recommended)
+uv pip install anchor-stack
+```
+
+### Configure Your AI Tool
+
+<details>
+<summary><b>Claude Desktop</b></summary>
+
+Edit `%APPDATA%\Claude\claude_desktop_config.json` (Windows) or `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS):
+
 ```json
 {
   "mcpServers": {
@@ -41,65 +72,112 @@ Add to your MCP configuration:
 }
 ```
 
-**Cursor** (MCP settings):
+</details>
+
+<details>
+<summary><b>Cursor</b></summary>
+
+Edit `~/.cursor/mcp.json`:
+
 ```json
 {
-  "anchor-stack": {
-    "command": "anchor-stack",
-    "args": ["serve"]
+  "mcpServers": {
+    "anchor-stack": {
+      "command": "anchor-stack",
+      "args": ["serve"]
+    }
   }
 }
 ```
 
-### 2. Create a Project
+</details>
 
-Ask your AI assistant:
-> "Use anchor-stack to create a new Next.js project called my-app with PostgreSQL database support"
+<details>
+<summary><b>VS Code (Copilot)</b></summary>
 
-The AI will use the `scaffold_project` tool to create your project with:
-- Proper directory structure
-- Locked dependency versions
-- Built-in logging
-- AI rules files for Cursor, Claude Code, etc.
+Edit `.vscode/settings.json`:
 
-### 3. Add Capabilities
+```json
+{
+  "mcp": {
+    "servers": {
+      "anchor-stack": {
+        "command": "anchor-stack",
+        "args": ["serve"]
+      }
+    }
+  }
+}
+```
 
-Ask your AI assistant:
-> "Add the database-postgres pack to my project"
+</details>
+
+### Create Your First Project
+
+Simply ask your AI assistant:
+
+```
+Create a Next.js project called "my-app" using Anchor Stack
+```
+
+The AI will use `scaffold_project` to create:
+
+```
+my-app/
+├── src/
+│   ├── app/              # Next.js App Router
+│   ├── components/       # React components
+│   ├── lib/
+│   │   ├── core/         # Logger & Config (DO NOT MODIFY)
+│   │   └── utils/        # Utility functions
+│   └── services/         # Business logic
+├── CLAUDE.md             # Rules for Claude
+├── .cursor/rules/        # Rules for Cursor
+├── .windsurfrules        # Rules for Windsurf
+└── anchor.config.json    # Project metadata
+```
 
 ## Available Tools
 
-### scaffold_project
+### `scaffold_project`
 
 Create a new project from a Stack template.
 
-Parameters:
-- `app_name`: Project name (lowercase, alphanumeric, hyphens)
-- `app_type`: Stack type (`nextjs`, `python-api`)
-- `target_dir`: Where to create the project
-- `capabilities`: List of Packs to include
+```typescript
+scaffold_project({
+  stack_name: "nextjs",        // Stack type
+  project_name: "my-app",      // Project name
+  target_dir: "/path/to/dir"   // Target directory
+})
+```
 
-### add_pack
+### `add_pack`
 
 Add a capability pack to an existing project.
 
-Parameters:
-- `project_dir`: Path to project
-- `pack_name`: Pack to add (`database-postgres`, `ai-langgraph`)
+```typescript
+add_pack({
+  project_dir: "/path/to/project",
+  pack_name: "database-postgres"
+})
+```
 
-### doctor
+### `doctor`
 
-Check project health and report issues.
+Check project health and configuration.
 
-Parameters:
-- `project_dir`: Path to project
+```typescript
+doctor({
+  project_dir: "/path/to/project"
+})
+```
 
 ## Available Stacks
 
-| Stack | Description |
-|-------|-------------|
-| `nextjs` | Next.js 15 + React 19 + TypeScript |
-| `python-api` | FastAPI + SQLAlchemy + Pydantic |
+| Stack | Version | Description |
+|-------|---------|-------------|
+| `nextjs` | 2026.1 | Next.js 16 + React 19 + TypeScript 5.9 + Tailwind CSS |
+| `python-api` | Coming Soon | FastAPI + SQLAlchemy + Pydantic |
 
 ## Available Packs
 
@@ -107,6 +185,27 @@ Parameters:
 |------|-------------|
 | `database-postgres` | PostgreSQL with Drizzle ORM (JS) or SQLAlchemy (Python) |
 | `ai-langgraph` | LangChain + LangGraph for AI applications |
+
+## How It Works
+
+```
+┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
+│   AI Assistant  │────▶│   Anchor Stack   │────▶│  Your Project   │
+│  (Claude, etc.) │     │   (MCP Server)   │     │                 │
+└─────────────────┘     └──────────────────┘     └─────────────────┘
+                               │
+                    ┌──────────┴──────────┐
+                    ▼                     ▼
+              ┌──────────┐         ┌──────────┐
+              │  Stacks  │         │  Packs   │
+              │ (nextjs) │         │ (db,ai)  │
+              └──────────┘         └──────────┘
+```
+
+1. **You ask** your AI to create a project
+2. **AI calls** Anchor Stack's MCP tools
+3. **Anchor Stack generates** files with proper structure
+4. **AI Rules** help future AI interactions understand your project
 
 ## CLI Commands
 
@@ -126,35 +225,57 @@ anchor-stack info
 
 ## Configuration
 
-Environment variables:
-
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `ANCHOR_STACK_LOG_LEVEL` | `INFO` | Log level |
-| `ANCHOR_STACK_LOG_JSON` | `false` | JSON log output |
-| `ANCHOR_STACK_STACKS_DIR` | `stacks` | Stacks directory |
-| `ANCHOR_STACK_PACKS_DIR` | `packs` | Packs directory |
+| `ANCHOR_STACK_LOG_LEVEL` | `INFO` | Logging level (DEBUG, INFO, WARNING, ERROR) |
+| `ANCHOR_STACK_LOG_JSON` | `false` | Output logs in JSON format |
+| `ANCHOR_STACK_STACKS_DIR` | `stacks` | Custom stacks directory |
+| `ANCHOR_STACK_PACKS_DIR` | `packs` | Custom packs directory |
 
 ## Development
 
 ```bash
-# Install dev dependencies
-pip install -e ".[dev]"
+# Clone the repository
+git clone https://github.com/anthropics/anchor-stack.git
+cd anchor-stack
+
+# Install dependencies
+uv sync
 
 # Run tests
-pytest tests/ -v
+uv run pytest tests/ -v
 
 # Run linting
-ruff check src/
+uv run ruff check src/
 
-# Run type checking
-mypy src/
+# Start dev server
+uv run anchor-stack serve
 ```
 
-## License
+## Roadmap
 
-MIT License
+- [x] Core MCP Server implementation
+- [x] Next.js Stack template
+- [ ] FastAPI Stack template
+- [ ] Database Pack (PostgreSQL)
+- [ ] AI Pack (LangGraph)
+- [ ] Auth Pack (NextAuth/OAuth)
+- [ ] Web UI for template management
 
 ## Contributing
 
-Contributions are welcome! Please see CONTRIBUTING.md for guidelines.
+Contributions are welcome! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+
+## License
+
+MIT License - see [LICENSE](./LICENSE) for details.
+
+---
+
+<div align="center">
+
+**Built with Anchor Stack - Making AI-assisted development reliable**
+
+[Report Bug](https://github.com/anthropics/anchor-stack/issues) · [Request Feature](https://github.com/anthropics/anchor-stack/issues)
+
+</div>
