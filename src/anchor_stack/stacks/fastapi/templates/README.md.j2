@@ -9,7 +9,7 @@
 uv sync
 
 # Run development server
-uv run uvicorn app.main:app --reload
+cd src && uv run uvicorn app.main:app --reload
 
 # Run tests
 uv run pytest

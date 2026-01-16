@@ -81,3 +81,4 @@ Thumbs.db
 # - CLAUDE.md
 # - .cursor/rules/
 docs/
+.pypirc
