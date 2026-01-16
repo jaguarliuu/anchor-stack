@@ -28,9 +28,9 @@ mcp = FastMCP(settings.server_name)
 @mcp.tool()
 async def scaffold_project_tool(
     app_name: str,
-    app_type: str,
+    stack_name: str,
     target_dir: str,
-    stack_version: str = "2025.1",
+    stack_version: str = "2026.1",
     capabilities: list[str] | None = None,
     description: str | None = None,
 ) -> dict:
@@ -45,10 +45,12 @@ async def scaffold_project_tool(
 
     Args:
         app_name: Project name (lowercase, alphanumeric, hyphens allowed)
-        app_type: Technology stack type. Available: "nextjs", "python-api"
+        stack_name: Technology stack to use. MUST be one of:
+                   - "nextjs" - Next.js 16 + React 19 + TypeScript + Tailwind
+                   - "fastapi" - FastAPI + SQLAlchemy + Pydantic
         target_dir: Absolute path where project will be created
-        stack_version: Stack version to use (default: "2025.1")
-        capabilities: List of capability packs to include.
+        stack_version: Stack version (default: "2026.1")
+        capabilities: Optional list of capability packs to include.
                      Available: "database-postgres", "ai-langgraph"
         description: Optional project description
 
@@ -63,19 +65,19 @@ async def scaffold_project_tool(
     Example:
         scaffold_project_tool(
             app_name="my-saas-app",
-            app_type="nextjs",
+            stack_name="nextjs",
             target_dir="/home/user/projects/my-saas-app",
             capabilities=["database-postgres"]
         )
     """
     logger.info(
         "MCP tool called: scaffold_project",
-        extra={"app_name": app_name, "app_type": app_type},
+        extra={"app_name": app_name, "stack_name": stack_name},
     )
 
     return await scaffold_project(
         app_name=app_name,
-        app_type=app_type,
+        app_type=stack_name,
         target_dir=target_dir,
         stack_version=stack_version,
         capabilities=capabilities,
