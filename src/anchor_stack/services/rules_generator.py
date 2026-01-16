@@ -3,7 +3,7 @@ Rules Generator - Generate AI Rules files for different tools.
 
 Responsible for:
 - Generating rules files for Cursor, Claude Code, Windsurf, etc.
-- Merging Stack and Pack rules
+- Using Stack-specific rules templates
 - Creating standardized project documentation
 """
 
@@ -22,13 +22,20 @@ from anchor_stack.services.template_renderer import TemplateRenderer
 logger = get_logger(__name__)
 
 
-# Rules file paths for different AI tools
-RULES_PATHS = {
-    "cursor": ".cursor/rules/anchor-stack.mdc",
-    "claude": "CLAUDE.md",
-    "windsurf": ".windsurfrules",
-    "copilot": ".github/copilot-instructions.md",
-    "common": "docs/PROJECT_RULES.md",
+# Rules file output paths and their corresponding template names
+RULES_CONFIG = {
+    "cursor": {
+        "output_path": ".cursor/rules/anchor-stack.mdc",
+        "template_name": "cursor.mdc.j2",
+    },
+    "claude": {
+        "output_path": "CLAUDE.md",
+        "template_name": "claude.md.j2",
+    },
+    "windsurf": {
+        "output_path": ".windsurfrules",
+        "template_name": "windsurf.md.j2",
+    },
 }
 
 
@@ -37,7 +44,7 @@ class RulesGenerator:
     Generates AI Rules files for a project.
 
     Creates rules files for multiple AI coding tools,
-    ensuring consistent project documentation across all tools.
+    using Stack-specific templates for proper content.
 
     Example:
         generator = RulesGenerator()
@@ -47,7 +54,6 @@ class RulesGenerator:
     def __init__(self) -> None:
         """Initialize RulesGenerator."""
         self._renderer = TemplateRenderer()
-
         logger.debug("RulesGenerator initialized")
 
     def generate(
@@ -72,22 +78,40 @@ class RulesGenerator:
         # Build context for templates
         context = self._build_context(stack, spec, packs)
 
-        # Generate rules content
-        rules_content = self._generate_rules_content(context)
+        # Get rules directory from stack
+        rules_dir = stack.get_rules_path()
 
-        # Write rules files
         rules_files = {}
-        for tool_name, file_path in RULES_PATHS.items():
-            # Customize content for each tool
-            tool_content = self._customize_for_tool(rules_content, tool_name)
+
+        for tool_name, config in RULES_CONFIG.items():
+            output_path = config["output_path"]
+            template_path = None
+
+            if rules_dir:
+                template_path = rules_dir / config["template_name"]
+
+            if template_path and template_path.exists():
+                # Use stack-specific template
+                content = self._renderer.render_file(template_path, context)
+                logger.debug(
+                    "Using stack rules template",
+                    extra={"tool": tool_name, "template": str(template_path)},
+                )
+            else:
+                # Fallback to generic content
+                logger.warning(
+                    "Rules template not found, using fallback",
+                    extra={"tool": tool_name, "template": str(template_path)},
+                )
+                content = self._generate_fallback_content(context, tool_name)
 
             # Write file
-            file_writer.write_file(file_path, tool_content)
-            rules_files[tool_name] = file_path
+            file_writer.write_file(output_path, content)
+            rules_files[tool_name] = output_path
 
             logger.debug(
                 "Rules file generated",
-                extra={"tool": tool_name, "path": file_path},
+                extra={"tool": tool_name, "path": output_path},
             )
 
         logger.info(
@@ -122,7 +146,8 @@ class RulesGenerator:
             return False
 
         # Append to each rules file
-        for tool_name, file_path in RULES_PATHS.items():
+        for tool_name, config in RULES_CONFIG.items():
+            file_path = config["output_path"]
             full_path = file_writer.base_dir / file_path
             if full_path.exists():
                 existing_content = full_path.read_text(encoding="utf-8")
@@ -151,6 +176,8 @@ class RulesGenerator:
             "stack_version": stack.version,
             "stack_display_name": stack.display_name,
             "stack_id": stack.stack_id,
+            "dependencies": stack.dependencies,
+            "dev_dependencies": stack.dev_dependencies,
             "packs": [p.name for p in packs],
             "packs_display": [p.display_name for p in packs],
             "directory_structure": stack.directory_structure,
@@ -158,172 +185,43 @@ class RulesGenerator:
             "has_config": stack.builtin_features.config_management,
         }
 
-    def _generate_rules_content(self, context: dict[str, Any]) -> str:
-        """Generate the main rules content."""
+    def _generate_fallback_content(
+        self, context: dict[str, Any], tool_name: str
+    ) -> str:
+        """Generate fallback rules content when no template exists."""
         app_name = context["app_name"]
         stack_id = context["stack_id"]
-        packs = context["packs"]
-        directory_structure = context["directory_structure"]
 
-        # Build modifiable and protected directories
-        modifiable_dirs = []
-        protected_dirs = []
-        for dir_path in directory_structure:
-            if "lib/core" in dir_path or "lib/db" in dir_path:
-                protected_dirs.append(dir_path)
-            else:
-                modifiable_dirs.append(dir_path)
+        content = f"""# {app_name} - Project Rules
 
-        content = f"""# Project Rules - {app_name}
-
-## Project Overview
-- **Project Name**: {app_name}
+## Overview
+- **Project**: {app_name}
 - **Stack**: {stack_id}
-- **Installed Packs**: {', '.join(packs) if packs else 'None'}
 
-## Directory Structure
+## Conventions
 
-### Modifiable Directories
-These directories can be freely modified:
-{self._format_dir_list(modifiable_dirs)}
+### Logging
+Use the built-in logger module instead of print/console.log.
 
-### Protected Directories
-These directories contain framework code. Do not modify directly:
-{self._format_dir_list(protected_dirs) if protected_dirs else '- None'}
+### Configuration
+Use the config module for all configuration values.
 
-## Logging Standards
+### Protected Files
+Do not modify files in the `core/` directory.
 
-### How to Add Logs
-Use the built-in logger, NOT console.log or print():
-
-```typescript
-// TypeScript/JavaScript
-import {{ logger }} from '@/lib/logger';
-
-// Correct usage
-logger.info('User logged in', {{ userId: user.id }});
-logger.error('Payment failed', {{ orderId, error: error.message }});
-logger.debug('Cache hit', {{ key, ttl }});
-
-// INCORRECT - Do not use
-console.log('User logged in');  // ❌
-```
-
-```python
-# Python
-from app.core.logger import get_logger
-
-logger = get_logger(__name__)
-
-# Correct usage
-logger.info("User logged in", extra={{"user_id": user.id}})
-logger.error("Payment failed", extra={{"order_id": order_id, "error": str(e)}})
-
-# INCORRECT - Do not use
-print("User logged in")  # ❌
-```
-
-### Log Levels
-- `DEBUG`: Development debugging info
-- `INFO`: Normal business operations
-- `WARNING`: Unexpected but non-critical issues
-- `ERROR`: Errors requiring attention
-
-### Where to Add Logs
-1. **API endpoints**: Log request start and completion
-2. **Database operations**: Log queries and errors
-3. **External service calls**: Log requests and responses
-4. **Authentication**: Log login/logout events
-5. **Critical business logic**: Log state changes
-
-## Adding New Features
-
-### Adding a New Page/Route
-1. Create file in the appropriate route directory
-2. Follow existing naming conventions
-3. Use shared components from `src/components/`
-4. Add appropriate logging
-
-### Adding a New API Endpoint
-1. Create route handler in the API directory
-2. Use the standard API handler wrapper
-3. Add request/response logging
-4. Handle errors with standard error types
-
-### Adding a New Component
-1. Create in `src/components/`
-2. Use TypeScript types
-3. Follow existing component patterns
-
-## Debug Guide
-
-When encountering issues, provide:
-1. **Full error logs** (from logger output, not console)
-2. **Request parameters** that triggered the error
-3. **Environment** (development/production)
-4. **Recent code changes** related to the error
-
-## Prohibited Actions
-- ❌ Do NOT delete or modify `anchor.config.json`
-- ❌ Do NOT modify files in `src/lib/core/`
-- ❌ Do NOT use console.log/print instead of logger
-- ❌ Do NOT write database queries directly in components
-- ❌ Do NOT hardcode configuration values
-- ❌ Do NOT skip error handling in API endpoints
-
-## Configuration Management
-
-All configuration should go through the config system:
-- Environment variables in `.env` / `.env.local`
-- Do NOT hardcode secrets or URLs
-- Use typed config objects
-
+## Generated by Anchor Stack
 """
-        return content
 
-    def _format_dir_list(self, directories: list[str]) -> str:
-        """Format a list of directories as markdown."""
-        if not directories:
-            return "- (none)"
-        return "\n".join(f"- `{d}`" for d in directories)
-
-    def _customize_for_tool(self, content: str, tool_name: str) -> str:
-        """Customize rules content for a specific tool."""
         if tool_name == "cursor":
-            # Cursor uses MDC format
             header = """---
-description: Project rules and conventions for AI assistance
+description: Project rules for AI assistance
 globs: ["**/*"]
 ---
 
 """
             return header + content
 
-        elif tool_name == "claude":
-            # Claude Code format
-            header = """# CLAUDE.md - Project Instructions
-
-This file contains instructions for Claude Code when working on this project.
-
-"""
-            return header + content
-
-        elif tool_name == "windsurf":
-            # Windsurf format (similar to standard markdown)
-            return content
-
-        elif tool_name == "copilot":
-            # GitHub Copilot format
-            header = """# GitHub Copilot Instructions
-
-These instructions guide GitHub Copilot when generating code for this project.
-
-"""
-            return header + content
-
-        else:
-            # Common/default format
-            return content
+        return content
 
     def _format_pack_rules(self, pack: Pack, tool_name: str) -> str:
         """Format Pack-specific rules section."""
