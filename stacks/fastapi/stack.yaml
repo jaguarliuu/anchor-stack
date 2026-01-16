@@ -31,7 +31,7 @@ dependencies:
 
 # Development dependencies
 dev_dependencies:
-  pytest: "9.0.2"
+  pytest: "8.3.5"
   pytest-asyncio: "0.25.0"
   pytest-cov: "6.1.1"
   ruff: "0.9.10"
